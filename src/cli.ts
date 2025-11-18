@@ -5,7 +5,7 @@ import { runSync } from "./commands/sync";
 
 const program = new Command();
 
-program.name("jalco-repoAI").description("AI task workflow scaffold and sync CLI").version("1.0.0");
+program.name("jalco-repoai").description("AI task workflow scaffold and sync CLI").version("1.0.0");
 
 program
   .command("init")

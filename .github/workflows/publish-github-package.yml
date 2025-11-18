@@ -1,4 +1,4 @@
-name: Publish jalco-repoAI to GitHub Packages
+name: Publish jalco-repoai to GitHub Packages
 
 on:
   release:
