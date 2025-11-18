@@ -4,6 +4,7 @@ import { ensureDir, fileExists, writeFile } from "../utils/fs";
 
 interface InitOptions {
   sample?: boolean;
+  updateAgents?: boolean;
 }
 
 const AI_WORKFLOW_TASKS_CONTENT = `# AI Workflow Tasks
@@ -399,14 +400,20 @@ function addTrailingNewline(content: string): string {
 async function createIfMissing(
   filePath: string,
   content: string,
-  summary: { created: string[]; skipped: string[] },
+  summary: { created: string[]; skipped: string[]; updated: string[] },
+  overwrite = false,
 ): Promise<void> {
-  if (await fileExists(filePath)) {
+  const exists = await fileExists(filePath);
+  if (exists && !overwrite) {
     summary.skipped.push(filePath);
     return;
   }
   await writeFile(filePath, addTrailingNewline(content));
-  summary.created.push(filePath);
+  if (exists && overwrite) {
+    summary.updated.push(filePath);
+  } else {
+    summary.created.push(filePath);
+  }
 }
 
 function today(): string {
@@ -471,9 +478,10 @@ This is a sample task to demonstrate the workflow. Feel free to customize or del
 }
 
 export async function runInit(options: InitOptions = {}): Promise<void> {
-  const summary = { created: [] as string[], skipped: [] as string[] };
+  const summary = { created: [] as string[], skipped: [] as string[], updated: [] as string[] };
   const root = process.cwd();
   const sampleEnabled = options.sample !== false;
+  const updateAgents = options.updateAgents === true;
 
   // Core directories
   await ensureDir(path.join(root, ".aicontext"));
@@ -492,12 +500,42 @@ export async function runInit(options: InitOptions = {}): Promise<void> {
   await createIfMissing(path.join(root, ".aicontext", "TASK_TEMPLATE.md"), TASK_TEMPLATE_CONTENT, summary);
 
   // Agents
-  await createIfMissing(path.join(root, ".aicontext", "agents", "01-intake-planner.md"), agentContent.intake, summary);
-  await createIfMissing(path.join(root, ".aicontext", "agents", "02-context-researcher.md"), agentContent.context, summary);
-  await createIfMissing(path.join(root, ".aicontext", "agents", "03-criteria-scope.md"), agentContent.criteria, summary);
-  await createIfMissing(path.join(root, ".aicontext", "agents", "04-implementation.md"), agentContent.implementation, summary);
-  await createIfMissing(path.join(root, ".aicontext", "agents", "05-docs-cleanup.md"), agentContent.docs, summary);
-  await createIfMissing(path.join(root, ".aicontext", "agents", "06-review-sync.md"), agentContent.review, summary);
+  await createIfMissing(
+    path.join(root, ".aicontext", "agents", "01-intake-planner.md"),
+    agentContent.intake,
+    summary,
+    updateAgents,
+  );
+  await createIfMissing(
+    path.join(root, ".aicontext", "agents", "02-context-researcher.md"),
+    agentContent.context,
+    summary,
+    updateAgents,
+  );
+  await createIfMissing(
+    path.join(root, ".aicontext", "agents", "03-criteria-scope.md"),
+    agentContent.criteria,
+    summary,
+    updateAgents,
+  );
+  await createIfMissing(
+    path.join(root, ".aicontext", "agents", "04-implementation.md"),
+    agentContent.implementation,
+    summary,
+    updateAgents,
+  );
+  await createIfMissing(
+    path.join(root, ".aicontext", "agents", "05-docs-cleanup.md"),
+    agentContent.docs,
+    summary,
+    updateAgents,
+  );
+  await createIfMissing(
+    path.join(root, ".aicontext", "agents", "06-review-sync.md"),
+    agentContent.review,
+    summary,
+    updateAgents,
+  );
 
   // Tasks index
   const tasksIndexPath = path.join(root, "tasks", "TASKS_INDEX.md");
@@ -530,6 +568,10 @@ export async function runInit(options: InitOptions = {}): Promise<void> {
   if (summary.skipped.length > 0) {
     console.log("Skipped (already existed or not requested):");
     summary.skipped.forEach((item) => console.log(`  - ${formatItem(item)}`));
+  }
+  if (summary.updated.length > 0) {
+    console.log("Updated:");
+    summary.updated.forEach((item) => console.log(`  - ${formatItem(item)}`));
   }
   console.log("Next steps: customize `.aicontext/CODESTYLE.md`, adjust agent files for your repo, and start creating tasks in `tasks/`.");
 }

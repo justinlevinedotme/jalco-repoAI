@@ -11,7 +11,8 @@ program
   .command("init")
   .description("Bootstrap the AI task workflow scaffold in the current repository")
   .option("--no-sample", "Skip creating a sample task")
-  .action(async (options: { sample?: boolean }) => {
+  .option("--update-agents", "Overwrite agent instruction files with the latest templates")
+  .action(async (options: { sample?: boolean; updateAgents?: boolean }) => {
     try {
       await runInit(options);
     } catch (error: any) {

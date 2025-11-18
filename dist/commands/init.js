@@ -386,13 +386,19 @@ const agentContent = {
 function addTrailingNewline(content) {
     return content.endsWith("\n") ? content : `${content}\n`;
 }
-async function createIfMissing(filePath, content, summary) {
-    if (await (0, fs_1.fileExists)(filePath)) {
+async function createIfMissing(filePath, content, summary, overwrite = false) {
+    const exists = await (0, fs_1.fileExists)(filePath);
+    if (exists && !overwrite) {
         summary.skipped.push(filePath);
         return;
     }
     await (0, fs_1.writeFile)(filePath, addTrailingNewline(content));
-    summary.created.push(filePath);
+    if (exists && overwrite) {
+        summary.updated.push(filePath);
+    }
+    else {
+        summary.created.push(filePath);
+    }
 }
 function today() {
     return new Date().toISOString().slice(0, 10);
@@ -454,9 +460,10 @@ This is a sample task to demonstrate the workflow. Feel free to customize or del
 `;
 }
 async function runInit(options = {}) {
-    const summary = { created: [], skipped: [] };
+    const summary = { created: [], skipped: [], updated: [] };
     const root = process.cwd();
     const sampleEnabled = options.sample !== false;
+    const updateAgents = options.updateAgents === true;
     // Core directories
     await (0, fs_1.ensureDir)(path_1.default.join(root, ".aicontext"));
     await (0, fs_1.ensureDir)(path_1.default.join(root, ".aicontext", "agents"));
@@ -472,12 +479,12 @@ async function runInit(options = {}) {
     await createIfMissing(path_1.default.join(root, ".aicontext", "CODESTYLE.md"), CODESTYLE_CONTENT, summary);
     await createIfMissing(path_1.default.join(root, ".aicontext", "TASK_TEMPLATE.md"), TASK_TEMPLATE_CONTENT, summary);
     // Agents
-    await createIfMissing(path_1.default.join(root, ".aicontext", "agents", "01-intake-planner.md"), agentContent.intake, summary);
-    await createIfMissing(path_1.default.join(root, ".aicontext", "agents", "02-context-researcher.md"), agentContent.context, summary);
-    await createIfMissing(path_1.default.join(root, ".aicontext", "agents", "03-criteria-scope.md"), agentContent.criteria, summary);
-    await createIfMissing(path_1.default.join(root, ".aicontext", "agents", "04-implementation.md"), agentContent.implementation, summary);
-    await createIfMissing(path_1.default.join(root, ".aicontext", "agents", "05-docs-cleanup.md"), agentContent.docs, summary);
-    await createIfMissing(path_1.default.join(root, ".aicontext", "agents", "06-review-sync.md"), agentContent.review, summary);
+    await createIfMissing(path_1.default.join(root, ".aicontext", "agents", "01-intake-planner.md"), agentContent.intake, summary, updateAgents);
+    await createIfMissing(path_1.default.join(root, ".aicontext", "agents", "02-context-researcher.md"), agentContent.context, summary, updateAgents);
+    await createIfMissing(path_1.default.join(root, ".aicontext", "agents", "03-criteria-scope.md"), agentContent.criteria, summary, updateAgents);
+    await createIfMissing(path_1.default.join(root, ".aicontext", "agents", "04-implementation.md"), agentContent.implementation, summary, updateAgents);
+    await createIfMissing(path_1.default.join(root, ".aicontext", "agents", "05-docs-cleanup.md"), agentContent.docs, summary, updateAgents);
+    await createIfMissing(path_1.default.join(root, ".aicontext", "agents", "06-review-sync.md"), agentContent.review, summary, updateAgents);
     // Tasks index
     const tasksIndexPath = path_1.default.join(root, "tasks", "TASKS_INDEX.md");
     const tasksIndexHeader = "# Tasks Index\n\n| ID | Title | Status | Priority | Owner | Tags | Updated |\n|----|-------|--------|----------|-------|------|---------|\n";
@@ -503,6 +510,10 @@ async function runInit(options = {}) {
     if (summary.skipped.length > 0) {
         console.log("Skipped (already existed or not requested):");
         summary.skipped.forEach((item) => console.log(`  - ${formatItem(item)}`));
+    }
+    if (summary.updated.length > 0) {
+        console.log("Updated:");
+        summary.updated.forEach((item) => console.log(`  - ${formatItem(item)}`));
     }
     console.log("Next steps: customize `.aicontext/CODESTYLE.md`, adjust agent files for your repo, and start creating tasks in `tasks/`.");
 }

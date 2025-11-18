@@ -5,11 +5,12 @@ const commander_1 = require("commander");
 const init_1 = require("./commands/init");
 const sync_1 = require("./commands/sync");
 const program = new commander_1.Command();
-program.name("jalco-repoAI").description("AI task workflow scaffold and sync CLI").version("1.0.0");
+program.name("jalco-repoai").description("AI task workflow scaffold and sync CLI").version("1.0.0");
 program
     .command("init")
     .description("Bootstrap the AI task workflow scaffold in the current repository")
     .option("--no-sample", "Skip creating a sample task")
+    .option("--update-agents", "Overwrite agent instruction files with the latest templates")
     .action(async (options) => {
     var _a;
     try {

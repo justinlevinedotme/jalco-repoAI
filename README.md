@@ -46,4 +46,7 @@ node dist/cli.js sync
 - Bump version before publishing: `npm version patch` (or `minor`/`major`), then push tags so CI publishes (`git push && git push --tags`).
 - Publish to npm: push a tag `vX.Y.Z` to trigger `.github/workflows/npm-publish.yml` or run `npm publish` locally after `npm run build`.
 - Publish to GitHub Packages: create a release or dispatch `.github/workflows/publish-github-package.yml`.
-- Update downstream repos: reinstall with `npm install jalco-repoai@X.Y.Z` (or your scoped name) and re-run `npx jalco-repoai init --no-sample` if templates/workflows need to refresh.***
+- Update downstream repos:
+  - If agent/templates changed: reinstall with `npm install jalco-repoai@X.Y.Z` (or your scoped name), then re-run `npx jalco-repoai init --no-sample` to regenerate missing files. Existing files are not overwritten; copy updated agent files from the package if you need to replace them.
+  - Alternatively, use `npx jalco-repoai init --no-sample --update-agents` to overwrite agent files with the latest templates.
+  - If workflows changed: re-run `npx jalco-repoai init --no-sample` to recreate missing workflows (will not override existing), or manually replace the files from the package.***
