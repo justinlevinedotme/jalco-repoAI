@@ -1,5 +1,5 @@
 {
-  "name": "@justinlevinedotme/jalco-repoAI",
+  "name": "@justinlevinedotme/jalco-repoai",
   "version": "1.0.0",
   "bin": {
     "jalco-repoAI": "dist/cli.js"
@@ -13,7 +13,7 @@
     "commander": "^11.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
-    "@types/node": "^20.0.0"
+    "typescript": "^5.0.0"
   }
 }
+``
