@@ -1,6 +1,6 @@
 {
   "name": "jalco-repoai",
-  "version": "2.0.0",
+  "version": "1.0.0",
   "bin": {
     "jalco-repoai": "dist/cli.js"
   },
