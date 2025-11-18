@@ -1,0 +1,19 @@
+{
+  "name": "@justinlevinedotme/jalco-repoAI",
+  "version": "1.0.0",
+  "bin": {
+    "jalco-repoAI": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w"
+  },
+  "dependencies": {
+    "yaml": "^2.4.0",
+    "commander": "^11.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0"
+  }
+}
