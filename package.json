@@ -1,5 +1,5 @@
 {
-  "name": "@justinlevinedotme/jalco-repoai",
+  "name": "jalco-repoai",
   "version": "1.0.0",
   "bin": {
     "jalco-repoai": "dist/cli.js"

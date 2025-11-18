@@ -1,0 +1,14 @@
+.github/workflows/jalco-repoAI-auto-sync.yml
+.aicontext/TASK_TEMPLATE.md
+.aicontext/CODESTYLE.md
+.aicontext/AI_WORKFLOW_TASKS.md
+.aicontext/AI_README.md
+.aicontext/AI_MCP_INSTRUCTIONS.md
+.aicontext/AI_GITMCP_INTEGRATION.md
+.aicontext/agents/06-review-sync.md
+.aicontext/agents/05-docs-cleanup.md
+.aicontext/agents/04-implementation.md
+.aicontext/agents/03-criteria-scope.md
+.aicontext/agents/02-context-researcher.md
+.aicontext/agents/01-intake-planner.md
+tasks/TASKS_INDEX.md
